@@ -1,0 +1,31 @@
+{
+    "name": "drupal/webform_preset",
+    "autoload": {
+        "psr-4": {
+            "Drupal\\webform_preset\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Drupal\\tests\\webform_preset\\": "tests/src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Merlin",
+            "email": "merlin@geeks4change.net"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.1"
+    },
+    "require-dev": {
+        "drupal/core": "^9",
+        "drupal/webform": "^6",
+        "drush/drush": "^11",
+        "phpunit/phpunit": "^9.5"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

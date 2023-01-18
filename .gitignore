@@ -1,0 +1,13 @@
+/.idea/
+/vendor/
+/composer.lock
+/composer.spoons.json
+/composer.spoons.lock
+/web/
+/.env
+/.editorconfig
+/.gitattributes
+/.phpunit.result.cache
+.envrc
+.envrc.local
+.composer-plugin.env
