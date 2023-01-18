@@ -1,0 +1,4 @@
+name: webform_preset
+description: Manages trusted presets for webform submissions.
+type: module
+core_version_requirement: ^9 || ^10
