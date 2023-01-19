@@ -22,31 +22,14 @@ use Drupal\webform\WebformInterface;
  *     plural = "@count webform presets",
  *   ),
  *   handlers = {
- *     "list_builder" = "Drupal\webform_preset\Entity\ListBuilder\WebformPresetListBuilder",
  *     "views_data" = "Drupal\views\EntityViewsData",
- *     "form" = {
- *       "add" = "Drupal\webform_preset\Entity\Form\WebformPresetForm",
- *       "edit" = "Drupal\webform_preset\Entity\Form\WebformPresetForm",
- *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
- *     },
- *     "route_provider" = {
- *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
- *     }
  *   },
  *   base_table = "webform_preset",
- *   admin_permission = "administer webform preset",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "id",
  *     "uuid" = "uuid",
- *   },
- *   links = {
- *     "collection" = "/admin/content/webform-preset",
- *     "add-form" = "/webform-preset/add",
- *     "canonical" = "/webform-preset/{webform_preset}",
- *     "edit-form" = "/webform-preset/{webform_preset}/edit",
- *     "delete-form" = "/webform-preset/{webform_preset}/delete",
- *   },
+ *   }
  * )
  */
 class WebformPreset extends ContentEntityBase implements WebformPresetInterface {
