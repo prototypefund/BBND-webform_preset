@@ -8,6 +8,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Url;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\WebformInterface;
+use Drupal\webform_preset\Utility\CronTool;
 
 /**
  * Defines the webform preset entity class.
@@ -98,6 +99,57 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
   public function recreateSecret(): void {
     $secret = static::createSecret();
     $this->set('secret', $secret);
+  }
+
+  public static function loadByRequestQuery(WebformInterface $webform): ?WebformPresetInterface {
+    return static::loadByRequestQueryAndSecret($webform, static::getMaybeSecretFromRequest());
+  }
+
+  public static function getMaybeSecretFromRequest(): ?string {
+    return \Drupal::request()->query->get(WebformPreset::QUERY);
+  }
+
+  public static function loadByRequestQueryAndSecret(WebformInterface $webform, ?string $secret): ?WebformPresetInterface {
+    if (!$secret) {
+      return NULL;
+    }
+    $now = \Drupal::time()->getRequestTime();
+    $query = \Drupal::entityTypeManager()
+      ->getStorage('webform_preset')
+      ->getQuery();
+    $unExpired = $query
+      ->orConditionGroup()
+      ->notExists('expires')
+      ->condition('expires', $now, '>');
+    $ids = $query
+      ->condition('webform', $webform)
+      ->condition('secret', $secret)
+      ->condition($unExpired)
+      ->accessCheck(FALSE)
+      ->execute();
+    if ($ids) {
+      $id = reset($ids);
+      return WebformPreset::load($id);
+    }
+    else {
+      return NULL;
+    }
+  }
+
+  public static function cron(): void {
+    if (CronTool::create('webform_preset', 86400)->isDueAndSetDone()) {
+      $now = \Drupal::time()->getRequestTime();
+      $storage = \Drupal::entityTypeManager()
+        ->getStorage('webform_preset');
+      $ids = $storage
+        ->getQuery()
+        ->condition('expires', $now, '<=')
+        ->accessCheck(FALSE)
+        ->execute();
+      foreach (array_chunk($ids, 50) as $chunkIds) {
+        $storage->delete(WebformPreset::loadMultiple($chunkIds));
+      }
+    }
   }
 
 }

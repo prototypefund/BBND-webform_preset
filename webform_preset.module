@@ -1,68 +1,10 @@
 <?php
 
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform_preset\Entity\WebformPreset;
-use Drupal\webform_preset\Entity\WebformPresetInterface;
-use Drupal\webform_preset\Utility\CronTool;
-
-/**
- * Implements hook_entity_prepare_form().
- */
-function webform_preset_entity_prepare_form(EntityInterface $entity, $operation, FormStateInterface $form_state) {
-  if (
-    $entity instanceof WebformSubmissionInterface
-    && $operation === 'create'
-    && ($presetSecret = \Drupal::request()->query->get(WebformPreset::QUERY))
-    && is_string($presetSecret)
-    && ($preset = _webform_preset_load_preset($entity->getWebform(), $presetSecret))
-  ) {
-    $data = $preset->getData();
-    $entity->setData($data);
-  }
-}
-
-function _webform_preset_load_preset(WebformInterface $webform, string $secret): ?WebformPresetInterface {
-  $now = \Drupal::time()->getRequestTime();
-  $query = \Drupal::entityTypeManager()
-    ->getStorage('webform_preset')
-    ->getQuery();
-  $unExpired = $query
-    ->orConditionGroup()
-    ->notExists('expires')
-    ->condition('expires', $now, '>');
-  $ids = $query
-    ->condition('webform', $webform)
-    ->condition('secret', $secret)
-    ->condition($unExpired)
-    ->accessCheck(FALSE)
-    ->execute();
-  if ($ids) {
-    $id = reset($ids);
-    return WebformPreset::load($id);
-  }
-  else {
-    return NULL;
-  }
-}
 
 /**
  * Implements hook_cron().
  */
 function webform_preset_cron() {
-  if (CronTool::create('webform_preset', 86400)->isDueAndSetDone()) {
-    $now = \Drupal::time()->getRequestTime();
-    $storage = \Drupal::entityTypeManager()
-      ->getStorage('webform_preset');
-    $ids = $storage
-      ->getQuery()
-      ->condition('expires', $now, '<=')
-      ->accessCheck(FALSE)
-      ->execute();
-    foreach (array_chunk($ids, 50) as $chunkIds) {
-      $storage->delete(WebformPreset::loadMultiple($chunkIds));
-    }
-  }
+  WebformPreset::cron();
 }
