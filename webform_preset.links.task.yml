@@ -1,0 +1,18 @@
+entity.webform_preset.view:
+  title: 'View'
+  route_name: entity.webform_preset.canonical
+  base_route: entity.webform_preset.canonical
+entity.webform_preset.edit_form:
+  title: 'Edit'
+  route_name: entity.webform_preset.edit_form
+  base_route: entity.webform_preset.canonical
+entity.webform_preset.delete_form:
+  title: 'Delete'
+  route_name: entity.webform_preset.delete_form
+  base_route: entity.webform_preset.canonical
+  weight: 10
+entity.webform_preset.collection:
+  title: 'Webform presets'
+  route_name: entity.webform_preset.collection
+  base_route: system.admin_content
+  weight: 10

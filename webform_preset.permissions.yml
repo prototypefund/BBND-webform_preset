@@ -1,0 +1,3 @@
+administer webform preset:
+  title: 'Administer webform preset settings'
+  restrict access: true
