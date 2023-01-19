@@ -5,6 +5,7 @@ namespace Drupal\webform_preset\Entity;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Url;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\WebformInterface;
 
@@ -90,8 +91,8 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
     return $this->get('secret')->getString();
   }
 
-  public function getUrl() {
-    $this->getWebform()->toUrl('canonical', ['query' => [static::QUERY => $this->getSecret()]]);
+  public function getUrl(): Url {
+    return $this->getWebform()->toUrl('canonical', ['query' => [static::QUERY => $this->getSecret()]]);
   }
 
   public function recreateSecret(): void {
