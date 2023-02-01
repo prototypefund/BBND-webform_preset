@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\webform_preset\Plugin\WebformHandler;
 
-use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Http\Exception\CacheableAccessDeniedHttpException;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform_preset\Entity\WebformPreset;
@@ -23,16 +23,20 @@ use Drupal\webform_preset\Entity\WebformPreset;
  */
 final class WebformPresetWebformHandler extends WebformHandlerBase {
 
-  public function access(WebformSubmissionInterface $webform_submission, $operation, AccountInterface $account = NULL) {
-    return AccessResult::allowedIf(
-      $operation === 'create'
-      && WebformPreset::loadByRequestQuery($webform_submission->getWebform())
-    )->addCacheTags(['request.query:' . WebformPreset::QUERY]);
-  }
-
   public function prepareForm(WebformSubmissionInterface $webform_submission, $operation, FormStateInterface $form_state) {
-    if ($preset = WebformPreset::loadByRequestQuery($webform_submission->getWebform())) {
-      $webform_submission->setData($preset->getData());
+    $webformPreset = WebformPreset::loadByRequestQuery($webform_submission->getWebform());
+    if ($operation === 'add' && $webformPreset) {
+      $data = $webformPreset->getData();
+      $webform_submission->setData($data);
+      dump(get_defined_vars());
+    }
+    else {
+      // We can not do this by ::access.
+      $cacheability = (new CacheableMetadata())
+        ->addCacheableDependency($webform_submission->getWebform())
+        ->addCacheTags(['request.query:' . WebformPreset::QUERY])
+      ;
+      throw new CacheableAccessDeniedHttpException($cacheability);
     }
   }
 

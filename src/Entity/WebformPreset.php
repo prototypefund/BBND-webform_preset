@@ -116,7 +116,7 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
   }
 
   public function getData(): array {
-    return $this->get('data')->getValue();
+    return $this->get('data')->getValue()[0] ?? [];
   }
 
   public function getExpires(): int {
@@ -157,7 +157,7 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
       ->notExists('expires')
       ->condition('expires', $now, '>');
     $ids = $query
-      ->condition('webform', $webform)
+      ->condition('webform', $webform->id())
       ->condition('secret', $secret)
       ->condition($unExpired)
       ->accessCheck(FALSE)
