@@ -23,9 +23,9 @@
         "php": "^7.4 || ^8.1"
     },
     "require-dev": {
-        "drupal/core": "^9",
+        "drupal/core": "^9||^10",
         "drush/drush": "^11",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9"
     },
     "config": {
         "sort-packages": true
