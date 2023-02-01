@@ -14,7 +14,7 @@ interface WebformPresetInterface extends EntityInterface {
 
   public function getExpires(): int;
 
-  public function getUrl();
+  public function getSecretUrl();
 
   public function recreateSecret(): void;
 
