@@ -17,11 +17,13 @@
         }
     ],
     "require": {
+        "drupal/entity": "^1",
+        "drupal/webform": "^6",
+        "drupal/yamlelement": "^1",
         "php": "^7.4 || ^8.1"
     },
     "require-dev": {
         "drupal/core": "^9",
-        "drupal/webform": "^6",
         "drush/drush": "^11",
         "phpunit/phpunit": "^9.5"
     },

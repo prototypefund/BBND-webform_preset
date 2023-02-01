@@ -1,0 +1,5 @@
+webform_preset.add_form:
+  title: 'Add webform preset'
+  route_name: entity.webform_preset.add_form
+  appears_on:
+    - entity.webform_preset.collection

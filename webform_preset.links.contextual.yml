@@ -1,0 +1,10 @@
+entity.webform_preset.edit_form:
+  route_name: entity.webform_preset.edit_form
+  group: webform_preset
+  title: Edit
+
+entity.webform_preset.delete_form:
+  route_name: entity.webform_preset.delete_form
+  group: webform_preset
+  title: Delete
+  weight: 10

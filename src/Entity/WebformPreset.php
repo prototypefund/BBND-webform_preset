@@ -24,14 +24,32 @@ use Drupal\webform_preset\Utility\CronTool;
  *     plural = "@count webform presets",
  *   ),
  *   handlers = {
- *     "views_data" = "Drupal\views\EntityViewsData",
+ *     "list_builder" = "Drupal\webform_preset\Entity\ListBuilder\WebformPresetListBuilder",
+ *     "views_data" = "Drupal\entity\EntityViewsData",
+ *     "form" = {
+ *       "add" = "Drupal\webform_preset\Entity\Form\WebformPresetForm",
+ *       "edit" = "Drupal\webform_preset\Entity\Form\WebformPresetForm",
+ *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
+ *     },
+ *     "route_provider" = {
+ *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *     },
  *   },
  *   base_table = "webform_preset",
+ *   admin_permission = "webform_preset: administer",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "id",
  *     "uuid" = "uuid",
- *   }
+ *   },
+ *   links = {
+ *     "collection" = "/admin/content/webform-preset",
+ *     "add-form" = "/webform-preset/add",
+ *     "canonical" = "/webform-preset/{webform_preset}",
+ *     "edit-form" = "/webform-preset/{webform_preset}/edit",
+ *     "delete-form" = "/webform-preset/{webform_preset}/delete",
+ *   },
+ *   field_ui_base_route = "entity.webform_preset.admin",
  * )
  */
 class WebformPreset extends ContentEntityBase implements WebformPresetInterface {
@@ -45,19 +63,32 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
 
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields['expires'] = BaseFieldDefinition::create('timestamp')
-      ->setLabel(t('Expires'));
     $fields['webform'] = BaseFieldDefinition::create('entity_reference')
       ->setSetting('target_type', 'webform')
       ->setRequired(TRUE)
-      ->setLabel(t('Webform'));
-    $fields['secret'] = BaseFieldDefinition::create('string')
-      ->setRequired(TRUE)
-      ->setDefaultValueCallback('\Drupal\webform_preset\Entity\WebformPreset::createConfirmationSecret')
-      ->setLabel(t('Secret'));
+      ->setLabel(t('Webform'))
+      ->setDisplayOptions('form', ['weight' => 10, 'type' => 'options_select'])
+      ->setDisplayOptions('view', ['weight' => 10, 'label' => 'inline'])
+    ;
     $fields['data'] = BaseFieldDefinition::create('map')
       ->setRequired(TRUE)
-      ->setLabel(t('Data'));
+      ->setLabel(t('Data'))
+      ->setDisplayOptions('form', ['weight' => 20, 'type' => 'yamlelement'])
+      ->setDisplayOptions('view', ['weight' => 20, 'type' => 'yamlelement'])
+    ;
+    $fields['expires'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(t('Expires'))
+      ->setDefaultValueCallback('\Drupal\webform_preset\Entity\WebformPreset::createExpireTimestamp')
+      ->setDisplayOptions('form', ['weight' => 30])
+      ->setDisplayOptions('view', ['weight' => 30, 'label' => 'inline'])
+    ;
+    $fields['secret'] = BaseFieldDefinition::create('string')
+      ->setRequired(TRUE)
+      ->setDefaultValueCallback('\Drupal\webform_preset\Entity\WebformPreset::createSecret')
+      ->setLabel(t('Secret'))
+      ->setDisplayOptions('form', ['weight' => 40])
+      ->setDisplayOptions('view', ['weight' => 40, 'label' => 'inline'])
+    ;
 
     return $fields;
   }
@@ -65,6 +96,11 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
   public static function createSecret(): string {
     /** @noinspection PhpUnhandledExceptionInspection */
     return bin2hex(random_bytes(16));
+  }
+
+  public static function createExpireTimestamp(): int {
+    // Expires in 1 week by default.
+    return \Drupal::time()->getRequestTime() + 86400 * 7;
   }
 
   public static function createItem(WebformInterface $webform, array $data, int $expires = NULL) {

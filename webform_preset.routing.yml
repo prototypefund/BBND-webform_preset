@@ -1,0 +1,7 @@
+entity.webform_preset.admin:
+  path: '/admin/structure/webform-preset'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Webform Presets'
+  requirements:
+    _permission: 'webform_preset: administer'
