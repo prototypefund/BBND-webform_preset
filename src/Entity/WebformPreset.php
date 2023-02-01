@@ -49,7 +49,6 @@ use Drupal\webform_preset\Utility\CronTool;
  *     "edit-form" = "/webform-preset/{webform_preset}/edit",
  *     "delete-form" = "/webform-preset/{webform_preset}/delete",
  *   },
- *   field_ui_base_route = "entity.webform_preset.admin",
  * )
  */
 class WebformPreset extends ContentEntityBase implements WebformPresetInterface {

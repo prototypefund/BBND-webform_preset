@@ -1,5 +1,0 @@
-webform_preset.admin.webform_preset:
-  title: Webform presets
-  route_name: entity.webform_preset.field_ui_fields
-  parent: system.admin_structure
-  description: 'To manage technician UI.'
