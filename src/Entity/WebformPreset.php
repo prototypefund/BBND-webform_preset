@@ -128,7 +128,9 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
   }
 
   public function getSecretUrl(): Url {
-    return $this->getWebform()->toUrl('canonical', ['query' => [static::QUERY => $this->getSecret()]]);
+    return $this->getWebform()
+      ->toUrl('canonical', ['query' => [static::QUERY => $this->getSecret()]])
+      ->setOption('absolute', TRUE);
   }
 
   public function recreateSecret(): void {
