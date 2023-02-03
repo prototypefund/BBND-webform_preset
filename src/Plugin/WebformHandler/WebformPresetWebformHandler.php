@@ -24,18 +24,20 @@ use Drupal\webform_preset\Entity\WebformPreset;
 final class WebformPresetWebformHandler extends WebformHandlerBase {
 
   public function prepareForm(WebformSubmissionInterface $webform_submission, $operation, FormStateInterface $form_state) {
-    $webformPreset = WebformPreset::loadByRequestQuery($webform_submission->getWebform());
-    if ($operation === 'add' && $webformPreset) {
-      $data = $webformPreset->getData();
-      $webform_submission->setData($data);
-    }
-    else {
-      // We can not do this by ::access.
-      $cacheability = (new CacheableMetadata())
-        ->addCacheableDependency($webform_submission->getWebform())
-        ->addCacheTags(['request.query:' . WebformPreset::QUERY])
-      ;
-      throw new CacheableAccessDeniedHttpException($cacheability);
+    if ($operation === 'add') {
+      $webformPreset = WebformPreset::loadByRequestQuery($webform_submission->getWebform());
+      $data = $webformPreset ? $webformPreset->getData() : NULL;
+      if ($data) {
+        $webform_submission->setData($data);
+      }
+      else {
+        // We can not do this by ::access.
+        $cacheability = (new CacheableMetadata())
+          ->addCacheableDependency($webform_submission->getWebform())
+          ->addCacheTags(['request.query:' . WebformPreset::QUERY])
+        ;
+        throw new CacheableAccessDeniedHttpException($cacheability);
+      }
     }
   }
 
