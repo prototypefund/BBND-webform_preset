@@ -107,7 +107,7 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
       'webform' => $webform->id(),
       'data' => $data,
       'expires' => $expires,
-    ]);
+    ])->save();
   }
 
   public function getWebform(): WebformInterface {
