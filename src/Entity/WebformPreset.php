@@ -102,12 +102,14 @@ class WebformPreset extends ContentEntityBase implements WebformPresetInterface 
     return \Drupal::time()->getRequestTime() + 86400 * 7;
   }
 
-  public static function createItem(WebformInterface $webform, array $data, int $expires = NULL) {
-    return static::create([
+  public static function createItem(WebformInterface $webform, array $data, int $expires = NULL): WebformPresetInterface {
+    $webformPreset = static::create([
       'webform' => $webform->id(),
       'data' => $data,
       'expires' => $expires,
-    ])->save();
+    ]);
+    $webformPreset->save();
+    return $webformPreset;
   }
 
   public function getWebform(): WebformInterface {
