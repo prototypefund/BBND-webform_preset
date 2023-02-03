@@ -28,7 +28,6 @@ final class WebformPresetWebformHandler extends WebformHandlerBase {
     if ($operation === 'add' && $webformPreset) {
       $data = $webformPreset->getData();
       $webform_submission->setData($data);
-      dump(get_defined_vars());
     }
     else {
       // We can not do this by ::access.
