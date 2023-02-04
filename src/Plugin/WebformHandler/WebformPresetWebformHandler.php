@@ -51,7 +51,9 @@ final class WebformPresetWebformHandler extends WebformHandlerBase {
     if ($operation === 'create') {
       $data = $this->getWebformPresetData($this->webform);
       if (isset($data)) {
-        $key = $element['#webform_key'];
+        $key = $element['#webform_key']
+          // Compound elements...
+          ?? $element['#parents'][0] ?? NULL;
         // Neutral means allowed, so can not use ::allowedIf(). Sigh.
         $accessResult = AccessResult::forbiddenIf(isset($data[$key]));
       }
